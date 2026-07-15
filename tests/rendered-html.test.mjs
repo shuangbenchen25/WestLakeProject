@@ -33,12 +33,13 @@ async function htmlFor(pathname) {
 test("home contains only the two audience entry choices", async () => {
   const html = await htmlFor("/");
 
-  assert.match(html, /<title>西湖无障碍导览<\/title>/i);
+  assert.match(html, /<title>西湖无障碍导览 \| Accessible West Lake Guide<\/title>/i);
   assert.match(html, /选择导览/);
   assert.match(html, /href="\/visual"/);
   assert.match(html, /href="\/hearing"/);
   assert.match(html, /视障导览/);
   assert.match(html, /听障导览/);
+  assert.match(html, /Switch to English/);
   assert.doesNotMatch(html, /<small\b/i);
 });
 
@@ -69,6 +70,11 @@ test("visual and hearing guides have separate ten-scene pages", async () => {
     assert.match(hearing, new RegExp(scene));
   }
 
+  assert.match(visual, /开始定位导览/);
+  assert.match(hearing, /开始定位导览/);
+  assert.match(visual, /aria-live="polite"/);
+  assert.match(hearing, /aria-live="polite"/);
+
   assert.doesNotMatch(visual, /<small\b/i);
   assert.doesNotMatch(hearing, /<small\b/i);
 });
@@ -82,6 +88,7 @@ test("third-level pages diverge by audience need", async () => {
   assert.match(visual, /你面向一片开阔的湖面/);
   assert.match(visual, /朗读/);
   assert.match(hearing, /视频制作中/);
+  assert.match(hearing, /Video coming soon/);
   assert.doesNotMatch(visual, /视频制作中/);
   assert.doesNotMatch(hearing, /你面向一片开阔的湖面/);
   assert.doesNotMatch(visual, /<small\b/i);
@@ -95,10 +102,26 @@ test("source keeps distinct route files", async () => {
     "../app/hearing/page.tsx",
     "../app/visual/quyuan-fenghe/page.tsx",
     "../app/hearing/quyuan-fenghe/page.tsx",
+    "../app/components/LocationGuide.tsx",
+    "../app/data/scenic-spots.ts",
   ];
 
   for (const path of paths) {
     const source = await readFile(new URL(path, import.meta.url), "utf8");
     assert.ok(source.length > 0, path);
   }
+});
+
+test("source includes complete English guide content", async () => {
+  const sources = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/SceneGrid.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/LocationGuide.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/visual/quyuan-fenghe/page.tsx", import.meta.url), "utf8"),
+  ]);
+  const source = sources.join("\n");
+  assert.match(source, /Choose a guide/);
+  assert.match(source, /Ten West Lake Scenes/);
+  assert.match(source, /Start location guide/);
+  assert.match(source, /You are facing an open stretch of water/);
 });

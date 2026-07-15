@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { I18nProvider } from "./i18n";
+import { publicAsset } from "./site-path";
 
 export const metadata: Metadata = {
-  title: "西湖无障碍导览",
-  description: "西湖十景视障与听障导览。",
+  title: "西湖无障碍导览 | Accessible West Lake Guide",
+  description: "西湖十景视障与听障中英双语导览。Bilingual accessible guide to West Lake.",
 };
 
 export default function RootLayout({
@@ -14,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <head>
-        <link rel="icon" href="/quyuan-fenghe.jpg" type="image/jpeg" />
+        <link rel="icon" href={publicAsset("quyuan-fenghe.jpg")} type="image/jpeg" />
       </head>
-      <body>{children}</body>
+      <body><I18nProvider>{children}</I18nProvider></body>
     </html>
   );
 }

@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
+const githubPages = process.env.GITHUB_PAGES === "true";
+const basePath = githubPages ? "/WestLakeProject" : "";
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: githubPages ? "export" : undefined,
+  basePath,
+  assetPrefix: basePath,
+  trailingSlash: githubPages,
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

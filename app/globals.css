@@ -175,6 +175,60 @@ a:focus-visible {
   letter-spacing: -0.05em;
 }
 
+.location-guide {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 28px;
+  margin: 0 0 clamp(32px, 4vw, 56px);
+  padding: 24px 28px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.location-guide h2 {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-size: clamp(27px, 2.5vw, 38px);
+  font-weight: 600;
+}
+
+.location-guide p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.location-start,
+.location-stop {
+  min-width: 180px;
+  min-height: 58px;
+  padding: 12px 22px;
+  border: 0;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.location-start {
+  background: var(--green);
+}
+
+.hearing .location-start {
+  background: var(--red-dark);
+}
+
+.location-stop {
+  border: 2px solid var(--green);
+  background: transparent;
+  color: var(--green);
+}
+
+.location-start:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .ten-scenes {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -227,7 +281,6 @@ a:focus-visible {
 }
 
 .active-scene {
-  background-image: url("/quyuan-lake.jpg");
   background-position: center;
   background-size: cover;
   color: white;
@@ -261,9 +314,24 @@ a:focus-visible {
 
 .detail-photo {
   min-height: 620px;
-  background-image: url("/quyuan-lake.jpg");
   background-position: center;
   background-size: cover;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.language-switch {
+  min-width: 48px;
+  min-height: 48px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 800;
 }
 
 .description-panel {
@@ -417,6 +485,10 @@ a:focus-visible {
     font-size: 17px;
   }
 
+  .header-actions {
+    gap: 12px;
+  }
+
   .entry-main {
     min-height: calc(100vh - 76px);
   }
@@ -455,6 +527,17 @@ a:focus-visible {
   .scene-main > h1 {
     margin-bottom: 38px;
     font-size: 46px;
+  }
+
+  .location-guide {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 22px;
+  }
+
+  .location-start,
+  .location-stop {
+    width: 100%;
   }
 
   .ten-scenes {
