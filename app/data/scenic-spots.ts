@@ -10,14 +10,14 @@ export type ScenicSpotZone = {
 };
 
 // Temporary test geofence: the Elm College centre at NUS University Town.
-// The 180 m radius covers Elm Dining Hall and must be restored before field use.
+// The 100 m radius covers Elm Dining Hall and must be restored before field use.
 export const scenicSpotZones: readonly ScenicSpotZone[] = [
   {
     id: "quyuan-fenghe",
     name: "曲院风荷",
     nameEn: "Quyuan Garden",
     coordinate: [103.7723762, 1.3063908],
-    triggerRadiusMeters: 180,
+    triggerRadiusMeters: 100,
     routes: {
       visual: "/visual/quyuan-fenghe",
       hearing: "/hearing/quyuan-fenghe",

@@ -141,8 +141,10 @@ test("location guide uses the temporary NUS Elm test geofence", async () => {
 
   assert.match(scenicSpotSource, /Elm College centre at NUS University Town/);
   assert.match(scenicSpotSource, /coordinate: \[103\.7723762, 1\.3063908\]/);
-  assert.match(scenicSpotSource, /triggerRadiusMeters: 180/);
+  assert.match(scenicSpotSource, /triggerRadiusMeters: 100/);
   assert.match(locationGuideSource, /GUIDE_OPEN_DELAY_MS = 3_000/);
   assert.match(locationGuideSource, /3秒后打开导览/);
+  assert.match(locationGuideSource, /停止定位.*distanceMeters/);
+  assert.match(locationGuideSource, /Stop location.*distanceMeters/);
   assert.match(locationGuideSource, /clearTimeout\(navigationTimeoutRef\.current\)/);
 });

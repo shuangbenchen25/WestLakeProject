@@ -66,6 +66,7 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
   const [state, setState] = useState<"idle" | "loading" | "running" | "error">(
     "idle",
   );
+  const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
   const [message, setMessage] = useState({ zh: "点击后允许定位，到达景点时自动打开介绍。", en: "Allow location to open a guide when you arrive." });
 
   const clearTracking = () => {
@@ -82,12 +83,14 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
     clearTracking();
     triggeredRef.current = false;
     setState("idle");
+    setDistanceMeters(null);
     setMessage({ zh: "定位导览已停止。", en: "Location guide stopped." });
   };
 
   const fail = (zh: string, en: string) => {
     clearTracking();
     setState("error");
+    setDistanceMeters(null);
     setMessage({ zh, en });
   };
 
@@ -125,6 +128,8 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
         .sort((first, second) => first.distance - second.distance)[0];
 
       if (!nearest) return;
+      const roundedDistance = Math.round(nearest.distance);
+      setDistanceMeters(roundedDistance);
       if (nearest.distance <= nearest.spot.triggerRadiusMeters && !triggeredRef.current) {
         triggeredRef.current = true;
         setMessage({ zh: `已到达${nearest.spot.name}，3秒后打开导览。`, en: `You have reached ${nearest.spot.nameEn}. Opening the guide in 3 seconds.` });
@@ -136,7 +141,7 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
       }
 
       setState("running");
-      setMessage({ zh: `定位已开启，距${nearest.spot.name}约${Math.round(nearest.distance)}米。`, en: `Location is on. ${nearest.spot.nameEn} is about ${Math.round(nearest.distance)} metres away.` });
+      setMessage({ zh: `定位已开启，距${nearest.spot.name}约${roundedDistance}米。`, en: `Location is on. ${nearest.spot.nameEn} is about ${roundedDistance} metres away.` });
     });
   };
 
@@ -154,6 +159,7 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
     }
 
     setState("loading");
+    setDistanceMeters(null);
     setMessage({ zh: "正在请求定位权限…", en: "Requesting location permission…" });
 
     try {
@@ -183,8 +189,8 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
 
   const buttonLabel = running
     ? locale === "zh"
-      ? "停止定位"
-      : "Stop location"
+      ? `停止定位${distanceMeters === null ? "" : ` · ${distanceMeters} 米`}`
+      : `Stop location${distanceMeters === null ? "" : ` · ${distanceMeters} m`}`
     : state === "loading"
       ? locale === "zh"
         ? "正在定位…"
