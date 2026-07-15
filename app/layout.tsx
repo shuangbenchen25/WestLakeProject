@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { I18nProvider } from "./i18n";
 import { publicAsset } from "./site-path";
+import LegacyPwaCleanup from "./components/LegacyPwaCleanup";
 
 export const metadata: Metadata = {
   title: "西湖无障碍导览 | Accessible West Lake Guide",
@@ -18,7 +19,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href={publicAsset("quyuan-fenghe.jpg")} type="image/jpeg" />
       </head>
-      <body><I18nProvider>{children}</I18nProvider></body>
+      <body><I18nProvider><LegacyPwaCleanup />{children}</I18nProvider></body>
     </html>
   );
 }

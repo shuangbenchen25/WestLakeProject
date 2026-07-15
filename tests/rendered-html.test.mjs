@@ -103,6 +103,7 @@ test("source keeps distinct route files", async () => {
     "../app/visual/quyuan-fenghe/page.tsx",
     "../app/hearing/quyuan-fenghe/page.tsx",
     "../app/components/LocationGuide.tsx",
+    "../app/components/LegacyPwaCleanup.tsx",
     "../app/data/scenic-spots.ts",
   ];
 
