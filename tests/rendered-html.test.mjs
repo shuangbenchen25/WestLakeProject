@@ -70,8 +70,10 @@ test("visual and hearing guides have separate ten-scene pages", async () => {
     assert.match(hearing, new RegExp(scene));
   }
 
-  assert.match(visual, /开始定位导览/);
-  assert.match(hearing, /开始定位导览/);
+  assert.match(visual, /开启定位/);
+  assert.match(hearing, /开启定位/);
+  assert.doesNotMatch(visual, /到点自动导览/);
+  assert.doesNotMatch(hearing, /到点自动导览/);
   assert.match(visual, /aria-live="polite"/);
   assert.match(hearing, /aria-live="polite"/);
 
@@ -125,4 +127,22 @@ test("source includes complete English guide content", async () => {
   assert.match(source, /Ten West Lake Scenes/);
   assert.match(source, /Start location guide/);
   assert.match(source, /You are facing an open stretch of water/);
+});
+
+test("location guide uses the temporary NUS Elm test geofence", async () => {
+  const scenicSpotSource = await readFile(
+    new URL("../app/data/scenic-spots.ts", import.meta.url),
+    "utf8",
+  );
+  const locationGuideSource = await readFile(
+    new URL("../app/components/LocationGuide.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(scenicSpotSource, /Elm College centre at NUS University Town/);
+  assert.match(scenicSpotSource, /coordinate: \[103\.7723762, 1\.3063908\]/);
+  assert.match(scenicSpotSource, /triggerRadiusMeters: 180/);
+  assert.match(locationGuideSource, /GUIDE_OPEN_DELAY_MS = 3_000/);
+  assert.match(locationGuideSource, /3秒后打开导览/);
+  assert.match(locationGuideSource, /clearTimeout\(navigationTimeoutRef\.current\)/);
 });

@@ -43,6 +43,7 @@ declare global {
 
 const LOCATION_INTERVAL_MS = 12_000;
 const MAX_ACCEPTED_ACCURACY_METERS = 100;
+const GUIDE_OPEN_DELAY_MS = 3_000;
 
 function readCoordinate(position?: AMapPosition) {
   if (!position) return null;
@@ -58,6 +59,9 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
   const router = useRouter();
   const geolocationRef = useRef<AMapGeolocation | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const navigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const triggeredRef = useRef(false);
   const [state, setState] = useState<"idle" | "loading" | "running" | "error">(
     "idle",
@@ -66,7 +70,11 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
 
   const clearTracking = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current);
+    }
     intervalRef.current = null;
+    navigationTimeoutRef.current = null;
     geolocationRef.current = null;
   };
 
@@ -86,6 +94,9 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -116,8 +127,11 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
       if (!nearest) return;
       if (nearest.distance <= nearest.spot.triggerRadiusMeters && !triggeredRef.current) {
         triggeredRef.current = true;
-        setMessage({ zh: `已到达${nearest.spot.name}，正在打开导览。`, en: `You have reached ${nearest.spot.nameEn}. Opening the guide.` });
-        router.push(`${nearest.spot.routes[mode]}?autoplay=1`);
+        setMessage({ zh: `已到达${nearest.spot.name}，3秒后打开导览。`, en: `You have reached ${nearest.spot.nameEn}. Opening the guide in 3 seconds.` });
+        navigationTimeoutRef.current = setTimeout(() => {
+          navigationTimeoutRef.current = null;
+          router.push(`${nearest.spot.routes[mode]}?autoplay=1`);
+        }, GUIDE_OPEN_DELAY_MS);
         return;
       }
 
@@ -167,28 +181,35 @@ export default function LocationGuide({ mode }: { mode: GuideMode }) {
 
   const running = state === "running";
 
+  const buttonLabel = running
+    ? locale === "zh"
+      ? "停止定位"
+      : "Stop location"
+    : state === "loading"
+      ? locale === "zh"
+        ? "正在定位…"
+        : "Locating…"
+      : state === "error"
+        ? locale === "zh"
+          ? "重试定位"
+          : "Try location again"
+        : locale === "zh"
+          ? "开启定位"
+          : "Start location guide";
+
   return (
-    <section className="location-guide" aria-labelledby={`location-guide-${mode}`}>
-      <div>
-        <h2 id={`location-guide-${mode}`}>{locale === "zh" ? "到点自动导览" : "Guide on arrival"}</h2>
-        <p role="status" aria-live="polite">
-          {message[locale]}
-        </p>
-      </div>
-      {running ? (
-        <button type="button" className="location-stop" onClick={stop}>
-          {locale === "zh" ? "停止定位" : "Stop location"}
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="location-start"
-          onClick={start}
-          disabled={state === "loading"}
-        >
-          {state === "loading" ? (locale === "zh" ? "正在定位…" : "Locating…") : (locale === "zh" ? "开始定位导览" : "Start location guide")}
-        </button>
-      )}
-    </section>
+    <div className="location-guide">
+      <span className="sr-only" role="status" aria-live="polite">
+        {message[locale]}
+      </span>
+      <button
+        type="button"
+        className={running ? "location-stop" : "location-start"}
+        onClick={running ? stop : start}
+        disabled={state === "loading"}
+      >
+        {buttonLabel}
+      </button>
+    </div>
   );
 }

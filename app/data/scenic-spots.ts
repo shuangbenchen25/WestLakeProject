@@ -9,14 +9,14 @@ export type ScenicSpotZone = {
   routes: Record<GuideMode, string>;
 };
 
-// Coordinates use AMap's coordinate system. The radius is intentionally
-// generous for this first demo and must be calibrated during an on-site test.
+// Temporary test geofence: the Elm College centre at NUS University Town.
+// The 180 m radius covers Elm Dining Hall and must be restored before field use.
 export const scenicSpotZones: readonly ScenicSpotZone[] = [
   {
     id: "quyuan-fenghe",
     name: "曲院风荷",
     nameEn: "Quyuan Garden",
-    coordinate: [120.133333, 30.249287],
+    coordinate: [103.7723762, 1.3063908],
     triggerRadiusMeters: 180,
     routes: {
       visual: "/visual/quyuan-fenghe",

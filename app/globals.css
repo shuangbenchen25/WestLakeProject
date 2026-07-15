@@ -176,27 +176,20 @@ a:focus-visible {
 }
 
 .location-guide {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 28px;
+  display: flex;
   margin: 0 0 clamp(32px, 4vw, 56px);
-  padding: 24px 28px;
-  border: 1px solid var(--line);
-  background: var(--white);
 }
 
-.location-guide h2 {
-  margin: 0 0 8px;
-  font-family: var(--serif);
-  font-size: clamp(27px, 2.5vw, 38px);
-  font-weight: 600;
-}
-
-.location-guide p {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.6;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .location-start,
@@ -527,12 +520,6 @@ a:focus-visible {
   .scene-main > h1 {
     margin-bottom: 38px;
     font-size: 46px;
-  }
-
-  .location-guide {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 22px;
   }
 
   .location-start,
